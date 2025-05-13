@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   FiHeart, FiBookmark, FiChevronDown, FiChevronUp,
-  FiMapPin, FiDollarSign, FiClock, FiStar, FiMessageSquare
+  FiMessageSquare
 } from 'react-icons/fi';
 
 export const TalentCard = ({ talent, view, onToggleFavorite, onToggleSaved, onSendMessage }) => {
@@ -87,25 +87,6 @@ export const TalentCard = ({ talent, view, onToggleFavorite, onToggleSaved, onSe
               </span>
             )}
           </div>
-
-          <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 mb-3">
-            <div className="flex items-center">
-              <FiMapPin className="mr-1" />
-              <span>{talent.location}</span>
-            </div>
-            <div className="flex items-center">
-              <FiDollarSign className="mr-1" />
-              <span>{talent.hourlyRate}/hr</span>
-            </div>
-            <div className="flex items-center">
-              <FiClock className="mr-1" />
-              <span>{talent.availability}</span>
-            </div>
-            <div className="flex items-center">
-              <FiStar className="mr-1 text-yellow-500" />
-              <span>{talent.rating} ({talent.totalReviews} reviews)</span>
-            </div>
-          </div>
           
           {view === 'list' && (
             <p className="text-gray-600 text-sm mb-3 line-clamp-2">{talent.bio}</p>
@@ -168,10 +149,6 @@ export const TalentCard = ({ talent, view, onToggleFavorite, onToggleSaved, onSe
             >
               <p className="text-gray-600 text-sm mb-2">{talent.bio}</p>
               <div className="text-xs text-gray-500">
-                <div className="flex items-start mb-1">
-                  <span className="font-medium mr-2">Experience:</span>
-                  <span>{talent.experience} years</span>
-                </div>
                 <div className="flex items-start mb-1">
                   <span className="font-medium mr-2">Languages:</span>
                   <span>{talent.languages.join(', ')}</span>

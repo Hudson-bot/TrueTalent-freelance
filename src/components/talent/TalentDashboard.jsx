@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fi';
 import TalentSidebar from './TalentSidebar';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 // Main TalentDashboard component
 export default function TalentDashboard() {
@@ -15,14 +16,10 @@ export default function TalentDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [sortOption, setSortOption] = useState('match');
+  const [error, setError] = useState(null);
   const location = useLocation();
   const [filters, setFilters] = useState({
     skills: [],
-    hourlyRate: { min: 5, max: 150 },
-    availability: [],
-    experience: '',
-    location: [],
-    minRating: 0
   });
 
   // Get active tab from current path
@@ -37,137 +34,40 @@ export default function TalentDashboard() {
     return '';
   };
 
-  // Mock data for talents
-  const mockTalents = [
-    {
-      _id: '1',
-      name: 'Jessica Wilson',
-      title: 'UI/UX Designer & Frontend Developer',
-      skills: ['UI/UX Design', 'React', 'Figma', 'User Research', 'Wireframing'],
-      hourlyRate: '$45',
-      location: 'Remote',
-      availability: 'Full-time',
-      bio: 'Creative designer with 6+ years of experience creating user-centered designs for digital products.',
-      rating: 4.9,
-      totalReviews: 43,
-      experience: 6,
-      languages: ['English', 'Spanish'],
-      education: 'BFA in Graphic Design',
-      profilePic: '/api/placeholder/160/160',
-      isFavorite: false,
-      isSaved: true,
-      matchPercentage: 95
-    },
-    {
-      _id: '2',
-      name: 'Michael Chen',
-      title: 'Full Stack Developer',
-      skills: ['JavaScript', 'React', 'Node.js', 'MongoDB', 'Express'],
-      hourlyRate: '$60',
-      location: 'United States',
-      availability: 'Part-time',
-      bio: 'Full stack developer specializing in MERN stack with a focus on building scalable web applications.',
-      rating: 4.8,
-      totalReviews: 37,
-      experience: 5,
-      languages: ['English', 'Mandarin'],
-      education: 'MS in Computer Science',
-      profilePic: '/api/placeholder/160/160',
-      isFavorite: true,
-      isSaved: false,
-      matchPercentage: 87
-    },
-    {
-      _id: '3',
-      name: 'Sarah Johnson',
-      title: 'Content Writer & SEO Specialist',
-      skills: ['Content Writing', 'SEO', 'Blog Writing', 'Copywriting', 'Research'],
-      hourlyRate: '$35',
-      location: 'Remote',
-      availability: 'Hourly',
-      bio: 'SEO-focused content writer creating engaging, conversion-oriented content for websites and blogs.',
-      rating: 4.7,
-      totalReviews: 29,
-      experience: 4,
-      languages: ['English', 'French'],
-      education: 'BA in Communications',
-      profilePic: '/api/placeholder/160/160',
-      isFavorite: false,
-      isSaved: false,
-      matchPercentage: 82
-    },
-    {
-      _id: '4',
-      name: 'Raj Patel',
-      title: 'Data Scientist & ML Engineer',
-      skills: ['Python', 'Machine Learning', 'Data Analysis', 'TensorFlow', 'SQL'],
-      hourlyRate: '$75',
-      location: 'Asia',
-      availability: 'Full-time',
-      bio: 'Passionate data scientist with expertise in building predictive models and deriving actionable insights.',
-      rating: 4.9,
-      totalReviews: 25,
-      experience: 7,
-      languages: ['English', 'Hindi'],
-      education: 'PhD in Computer Science',
-      profilePic: '/api/placeholder/160/160',
-      isFavorite: false,
-      isSaved: true,
-      matchPercentage: 79
-    },
-    {
-      _id: '5',
-      name: 'Emma Williams',
-      title: 'Frontend Developer',
-      skills: ['JavaScript', 'React', 'Vue.js', 'CSS', 'HTML'],
-      hourlyRate: '$50',
-      location: 'Europe',
-      availability: 'Part-time',
-      bio: 'Frontend specialist creating responsive and accessible web applications with a focus on user experience.',
-      rating: 4.6,
-      totalReviews: 31,
-      experience: 4,
-      languages: ['English', 'German'],
-      education: 'BS in Web Development',
-      profilePic: '/api/placeholder/160/160',
-      isFavorite: true,
-      isSaved: false,
-      matchPercentage: 88
-    },
-    {
-      _id: '6',
-      name: 'David Rodriguez',
-      title: 'App Developer & UI Designer',
-      skills: ['React Native', 'Swift', 'Kotlin', 'UI Design', 'Firebase'],
-      hourlyRate: '$65',
-      location: 'United States',
-      availability: 'Full-time',
-      bio: 'Mobile app developer with a strong design background, creating intuitive and visually appealing applications.',
-      rating: 4.8,
-      totalReviews: 42,
-      experience: 6,
-      languages: ['English', 'Spanish'],
-      education: 'MS in Mobile Computing',
-      profilePic: '/api/placeholder/160/160',
-      isFavorite: false,
-      isSaved: true,
-      matchPercentage: 91
-    }
-  ];
-
   // Fetch talents data
   useEffect(() => {
     const fetchTalents = async () => {
       try {
         setIsLoading(true);
-        // In a real app, this would be an API call
-        // Using mock data for demonstration
-        setTimeout(() => {
-          setTalents(mockTalents);
-          setIsLoading(false);
-        }, 800);
+        setError(null);
+        
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:5000/api/users/all', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        // Transform the user data to match our talent structure
+        const transformedTalents = response.data.map(user => ({
+          _id: user._id,
+          name: user.name,
+          title: user.title || 'Freelancer',
+          skills: user.skills || [],
+          bio: user.bio || 'No bio available',
+          languages: user.languages || [],
+          marks: user.marks || 'Not specified',
+          profilePic: user.profilePic || '/api/placeholder/160/160',
+          isFavorite: false,
+          isSaved: false,
+          matchPercentage: Math.floor(Math.random() * 30) + 70
+        }));
+
+        setTalents(transformedTalents);
       } catch (error) {
         console.error("Error fetching talents:", error);
+        setError("Failed to load talents. Please try again later.");
+      } finally {
         setIsLoading(false);
       }
     };
@@ -176,34 +76,69 @@ export default function TalentDashboard() {
   }, []);
 
   // Handle toggling favorite status
-  const handleToggleFavorite = (talentId) => {
-    setTalents(
-      talents.map(talent =>
-        talent._id === talentId
-          ? { ...talent, isFavorite: !talent.isFavorite }
-          : talent
-      )
-    );
+  const handleToggleFavorite = async (talentId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`http://localhost:5000/api/favorites/${talentId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      setTalents(
+        talents.map(talent =>
+          talent._id === talentId
+            ? { ...talent, isFavorite: !talent.isFavorite }
+            : talent
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
   };
 
   // Handle toggling saved status
-  const handleToggleSaved = (talentId) => {
-    setTalents(
-      talents.map(talent =>
-        talent._id === talentId
-          ? { ...talent, isSaved: !talent.isSaved }
-          : talent
-      )
-    );
+  const handleToggleSaved = async (talentId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`http://localhost:5000/api/saved/${talentId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      setTalents(
+        talents.map(talent =>
+          talent._id === talentId
+            ? { ...talent, isSaved: !talent.isSaved }
+            : talent
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling saved:", error);
+    }
   };
 
   // Handle sending message to talent
-  const handleSendMessage = (talentId) => {
-    alert(`Message sent to talent ${talentId}`);
-    // In a real app, this would navigate to a messaging interface
+  const handleSendMessage = async (talentId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`http://localhost:5000/api/messages/create`, {
+        recipientId: talentId,
+        message: 'Hi, I would like to connect with you!'
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      // You might want to show a success message or navigate to the messages page
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
 
-  // Filter and sort talents based on current filters and sort option
+  // Filter talents based on search and filters
   const filteredTalents = talents.filter(talent => {
     const matchesSearch = talent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       talent.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -212,32 +147,10 @@ export default function TalentDashboard() {
     const matchesSkills = filters.skills.length === 0 ||
       filters.skills.some(skill => talent.skills.includes(skill));
 
-    const hourlyRateNum = parseInt(talent.hourlyRate.replace(/\D/g, ''));
-    const matchesHourlyRate = hourlyRateNum >= filters.hourlyRate.min &&
-      hourlyRateNum <= filters.hourlyRate.max;
-
-    const matchesAvailability = filters.availability.length === 0 ||
-      filters.availability.includes(talent.availability);
-
-    const matchesExperience = !filters.experience ||
-      (filters.experience === 'Entry level' && talent.experience < 3) ||
-      (filters.experience === 'Intermediate' && talent.experience >= 3 && talent.experience < 6) ||
-      (filters.experience === 'Expert' && talent.experience >= 6);
-
-    const matchesLocation = filters.location.length === 0 ||
-      filters.location.includes(talent.location);
-
-    const matchesRating = talent.rating >= filters.minRating;
-
-    return matchesSearch && matchesSkills && matchesHourlyRate &&
-      matchesAvailability && matchesExperience && matchesLocation && matchesRating;
+    return matchesSearch && matchesSkills;
   }).sort((a, b) => {
     if (sortOption === 'match') {
       return (b.matchPercentage || 0) - (a.matchPercentage || 0);
-    } else if (sortOption === 'rating') {
-      return b.rating - a.rating;
-    } else if (sortOption === 'hourlyRate') {
-      return parseInt(a.hourlyRate.replace(/\D/g, '')) - parseInt(b.hourlyRate.replace(/\D/g, ''));
     }
     return 0;
   });
@@ -275,13 +188,31 @@ export default function TalentDashboard() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <FiUsers size={48} className="mx-auto text-gray-300 mb-4" />
+          <h3 className="text-lg font-medium text-gray-800 mb-2">Error Loading Talents</h3>
+          <p className="text-gray-500">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-gray-50">
       <TalentSidebar activeTab={getActiveTab()} />
-      <div className="flex-1 overflow-hidden">
-        <main className="p-6">
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <main className="p-6 flex-1 overflow-y-auto">
           {/* Search and filter header */}
-          <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sticky top-0 bg-gray-50 z-10 py-3">
             <div className="relative flex-1 max-w-2xl">
               <input
                 type="text"
@@ -302,7 +233,7 @@ export default function TalentDashboard() {
                 <FiFilter className="mr-2" />
                 Filters
                 {Object.values(filters).flat().some(val =>
-                  Array.isArray(val) ? val.length > 0 : val !== '' && val !== 0
+                  Array.isArray(val) ? val.length > 0 : val !== ''
                 ) && (
                     <span className="ml-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
                       !
@@ -318,8 +249,6 @@ export default function TalentDashboard() {
                   className="appearance-none pl-3 pr-8 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="match">Best Match</option>
-                  <option value="rating">Highest Rated</option>
-                  <option value="hourlyRate">Lowest Rate</option>
                 </select>
                 <FiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
               </div>
@@ -350,7 +279,7 @@ export default function TalentDashboard() {
           <div className="flex flex-col md:flex-row gap-6">
             {/* Filters sidebar */}
             {showFilters && (
-              <div className="md:w-64 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+              <div className="md:w-64 bg-white p-4 rounded-lg shadow-sm border border-gray-100 sticky top-24">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="font-semibold text-gray-800">Filters</h2>
                   <button onClick={() => setShowFilters(false)} className="text-gray-400 hover:text-gray-600">
@@ -382,115 +311,11 @@ export default function TalentDashboard() {
                   </div>
                 </div>
 
-                {/* Hourly rate filter */}
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">
-                    Hourly Rate: ${filters.hourlyRate.min} - ${filters.hourlyRate.max}
-                  </h3>
-                  <div className="space-y-4 px-1">
-                    <input
-                      type="range"
-                      min="5"
-                      max="200"
-                      value={filters.hourlyRate.min}
-                      onChange={(e) => {
-                        const min = parseInt(e.target.value);
-                        const max = Math.max(min, filters.hourlyRate.max);
-                        handleFilterChange({
-                          ...filters,
-                          hourlyRate: { min, max }
-                        });
-                      }}
-                      className="w-full"
-                    />
-                    <input
-                      type="range"
-                      min="5"
-                      max="200"
-                      value={filters.hourlyRate.max}
-                      onChange={(e) => {
-                        const max = parseInt(e.target.value);
-                        const min = Math.min(max, filters.hourlyRate.min);
-                        handleFilterChange({
-                          ...filters,
-                          hourlyRate: { min, max }
-                        });
-                      }}
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-
-                {/* Availability filter */}
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Availability</h3>
-                  <div className="space-y-2">
-                    {['Full-time', 'Part-time', 'Hourly', 'Weekends only'].map((option) => (
-                      <label key={option} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={filters.availability.includes(option)}
-                          onChange={(e) => {
-                            const isChecked = e.target.checked;
-                            const newAvailability = isChecked
-                              ? [...filters.availability, option]
-                              : filters.availability.filter((a) => a !== option);
-                            handleFilterChange({ ...filters, availability: newAvailability });
-                          }}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
-                        />
-                        <span className="ml-2 text-sm text-gray-600">{option}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Experience filter */}
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Experience</h3>
-                  <div className="space-y-2">
-                    {['Entry level', 'Intermediate', 'Expert'].map((level) => (
-                      <label key={level} className="flex items-center">
-                        <input
-                          type="radio"
-                          name="experience"
-                          checked={filters.experience === level}
-                          onChange={() => handleFilterChange({ ...filters, experience: level })}
-                          className="border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
-                        />
-                        <span className="ml-2 text-sm text-gray-600">{level}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Rating filter */}
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Minimum Rating</h3>
-                  <div className="flex items-center space-x-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        onClick={() => handleFilterChange({ ...filters, minRating: star })}
-                        className={`p-1 ${filters.minRating >= star ? 'text-yellow-500' : 'text-gray-300'}`}
-                      >
-                        <FiStar fill={filters.minRating >= star ? 'currentColor' : 'none'} />
-                      </button>
-                    ))}
-                    <span className="ml-2 text-sm text-gray-600">{filters.minRating}+</span>
-                  </div>
-                </div>
-
                 {/* Reset filters button */}
                 <button
                   onClick={() => {
                     const defaultFilters = {
                       skills: [],
-                      hourlyRate: { min: 5, max: 150 },
-                      availability: [],
-                      experience: '',
-                      location: [],
-                      minRating: 0
                     };
                     handleFilterChange(defaultFilters);
                   }}
@@ -502,7 +327,7 @@ export default function TalentDashboard() {
             )}
 
             {/* Talents grid/list */}
-            <div className="flex-1">
+            <div className="flex-1 min-h-0">
               {filteredTalents.length === 0 ? (
                 <div className="bg-white rounded-lg shadow-sm p-8 text-center">
                   <FiUsers size={48} className="mx-auto text-gray-300 mb-4" />
@@ -611,25 +436,6 @@ function TalentCard({ talent, view, onToggleFavorite, onToggleSaved, onSendMessa
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 mb-3">
-            <div className="flex items-center">
-              <FiMapPin className="mr-1" />
-              <span>{talent.location}</span>
-            </div>
-            <div className="flex items-center">
-              <FiDollarSign className="mr-1" />
-              <span>{talent.hourlyRate}/hr</span>
-            </div>
-            <div className="flex items-center">
-              <FiClock className="mr-1" />
-              <span>{talent.availability}</span>
-            </div>
-            <div className="flex items-center">
-              <FiStar className="mr-1 text-yellow-500" />
-              <span>{talent.rating} ({talent.totalReviews} reviews)</span>
-            </div>
-          </div>
-
           {view === 'list' && (
             <p className="text-gray-600 text-sm mb-3 line-clamp-2">{talent.bio}</p>
           )}
@@ -689,16 +495,12 @@ function TalentCard({ talent, view, onToggleFavorite, onToggleSaved, onSendMessa
               <p className="text-gray-600 text-sm mb-2">{talent.bio}</p>
               <div className="text-xs text-gray-500">
                 <div className="flex items-start mb-1">
-                  <span className="font-medium mr-2">Experience:</span>
-                  <span>{talent.experience} years</span>
-                </div>
-                <div className="flex items-start mb-1">
                   <span className="font-medium mr-2">Languages:</span>
                   <span>{talent.languages.join(', ')}</span>
                 </div>
                 <div className="flex items-start">
-                  <span className="font-medium mr-2">Education:</span>
-                  <span>{talent.education}</span>
+                  <span className="font-medium mr-2">Marks:</span>
+                  <span>{talent.marks}</span>
                 </div>
               </div>
             </div>
