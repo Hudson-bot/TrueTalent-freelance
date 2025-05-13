@@ -1,0 +1,113 @@
+/* Talent Section */
+.talent {
+    padding: 100px 0;
+    background-color: var(--light-bg);
+  }
+  
+  .talent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+  }
+  
+  .talent-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+  }
+  
+  .talent-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+  
+  .talent-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    transition: var(--transition);
+  }
+  
+  .talent-card:hover .talent-avatar {
+    transform: scale(1.1);
+  }
+  
+  .talent-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .talent-role {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+  }
+  
+  .talent-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .stars {
+    color: #ffc107;
+    font-size: 1.1rem;
+  }
+  
+  .talent-hourly {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+  }
+  
+  .talent-skills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .skill-tag {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .talent-btn {
+    width: 100%;
+  }
+  
+  .talent-cta {
+    text-align: center;
+  }
+  
+  @media (max-width: 768px) {
+    .talent-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .talent-grid {
+      grid-template-columns: 1fr;
+    }
+  }

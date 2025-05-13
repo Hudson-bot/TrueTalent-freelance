@@ -1,0 +1,110 @@
+/* How It Works Section */
+.how-it-works {
+  padding: 100px 0;
+  overflow: hidden;
+}
+
+.steps-container {
+  display: flex;
+  gap: 30px;
+  position: relative;
+  padding: 40px 0;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.steps-container::-webkit-scrollbar {
+  display: none;
+}
+
+.step-card {
+  background: white;
+  border-radius: 15px;
+  padding: 40px 30px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 300px;
+  position: relative;
+  z-index: 1;
+  border: 2px solid transparent;
+}
+
+.step-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--primary-color);
+  box-shadow: 0 20px 40px rgba(67, 97, 238, 0.15);
+}
+
+.step-number {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 auto 25px;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.step-card:hover .step-number {
+  transform: scale(1.1) rotate(360deg);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step-animation {
+  margin: 0 auto 25px;
+  transition: transform 0.3s ease;
+}
+
+.step-card:hover .step-animation {
+  transform: scale(1.1);
+}
+
+.step-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+}
+
+.step-desc {
+  color: var(--text-light);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.steps-container::before {
+  content: "";
+  position: absolute;
+  top: 85px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 50%,
+    var(--tertiary-color) 100%
+  );
+  opacity: 0.2;
+  z-index: 0;
+}
+
+@media (max-width: 768px) {
+  .steps-container {
+    gap: 80px;
+  }
+}
