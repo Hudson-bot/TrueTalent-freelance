@@ -81,7 +81,7 @@ const CommunitySection = ({ personalInfo }) => {
             🚀 Join discussions, showcase your work, and support others in the community.
           </p>
           <p className="text-md text-gray-500 mt-2">
-            We’re excited to see what you'll bring!
+            We're excited to see what you'll bring!
           </p>
         </div>
 
@@ -104,6 +104,105 @@ const CommunitySection = ({ personalInfo }) => {
           </motion.button>
         </div>
       </motion.div>
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Community Feed</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Community Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded-xl shadow-sm"
+          >
+            <div className="flex items-center mb-4">
+              <div className="text-blue-500 text-xl mr-2">👥</div>
+              <h2 className="text-lg font-semibold text-gray-700">Active Members</h2>
+            </div>
+            <p className="text-3xl font-bold text-gray-800">5,234</p>
+            <p className="text-sm text-gray-500 mt-1">+123 this week</p>
+          </motion.div>
+
+          {/* Discussions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white p-6 rounded-xl shadow-sm"
+          >
+            <div className="flex items-center mb-4">
+              <div className="text-green-500 text-xl mr-2">💬</div>
+              <h2 className="text-lg font-semibold text-gray-700">Active Discussions</h2>
+            </div>
+            <p className="text-3xl font-bold text-gray-800">1,892</p>
+            <p className="text-sm text-gray-500 mt-1">+48 new topics today</p>
+          </motion.div>
+
+          {/* Engagement */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white p-6 rounded-xl shadow-sm"
+          >
+            <div className="flex items-center mb-4">
+              <div className="text-red-500 text-xl mr-2">❤️</div>
+              <h2 className="text-lg font-semibold text-gray-700">Total Engagements</h2>
+            </div>
+            <p className="text-3xl font-bold text-gray-800">25.4K</p>
+            <p className="text-sm text-gray-500 mt-1">+2.1K this month</p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Recent Discussions */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Discussions</h2>
+        <div className="bg-white rounded-xl shadow-sm divide-y">
+          {[
+            {
+              title: "Best practices for remote collaboration",
+              author: "Alex Johnson",
+              time: "2 hours ago",
+              replies: 15,
+              tag: "Discussion"
+            },
+            {
+              title: "Frontend Development Trends 2025",
+              author: "Sarah Chen",
+              time: "4 hours ago",
+              replies: 23,
+              tag: "Tech Talk"
+            },
+            {
+              title: "Getting Started with AI Development",
+              author: "Mike Peters",
+              time: "6 hours ago",
+              replies: 31,
+              tag: "Tutorial"
+            }
+          ].map((discussion, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-medium text-gray-800">{discussion.title}</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Started by {discussion.author} • {discussion.time} • {discussion.replies} replies
+                  </p>
+                </div>
+                <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">
+                  {discussion.tag}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
 
       <ProjectSlider />
 

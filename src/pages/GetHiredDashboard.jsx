@@ -7,6 +7,7 @@ import ProfileSection from '../components/getHired/ProfileSection';
 import LinksSection from '../components/getHired/LinksSection';
 import SkillsSection from '../components/getHired/SkillsSection';
 import CommunitySection from '../components/getHired/CommunitySection';
+import Messages from '../components/getHired/Messages';
 
 const GetHiredDashboard = () => {
   const navigate = useNavigate();
@@ -106,7 +107,7 @@ const GetHiredDashboard = () => {
   const updateFormData = (field, value) => {
     setFormData({ ...formData, [field]: value });
   };
-  
+
   // Function to update multiple fields at once
   const updateMultipleFields = (updates) => {
     setFormData(prevData => ({
@@ -160,9 +161,9 @@ const GetHiredDashboard = () => {
         )}
       </AnimatePresence>
 
-      <Sidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
         userData={formData}
         handleFileChange={handleFileChange}
         fetchLinks={fetchLinks}
@@ -180,8 +181,8 @@ const GetHiredDashboard = () => {
               transition={{ duration: 0.2 }}
               className="p-8"
             >
-              <ProfileSection 
-                formData={formData} 
+              <ProfileSection
+                formData={formData}
                 updateFormData={updateFormData}
                 updateMultipleFields={updateMultipleFields}
               />
@@ -197,8 +198,8 @@ const GetHiredDashboard = () => {
               transition={{ duration: 0.2 }}
               className="p-8"
             >
-              <LinksSection 
-                formData={formData} 
+              <LinksSection
+                formData={formData}
                 updateFormData={updateFormData}
                 updateMultipleFields={updateMultipleFields}
               />
@@ -214,11 +215,28 @@ const GetHiredDashboard = () => {
               transition={{ duration: 0.2 }}
               className="p-8"
             >
-              <SkillsSection 
-                formData={formData} 
+              <SkillsSection
+                formData={formData}
                 updateFormData={updateFormData}
                 updateMultipleFields={updateMultipleFields}
                 onComplete={completeOnboarding}
+              />
+            </motion.div>
+          )}
+
+          {activeTab === 'messages' && (
+            <motion.div
+              key="messages"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+              className="p-8"
+            >
+              <Messages 
+                formData={formData}
+                updateFormData={updateFormData}
+                updateMultipleFields={updateMultipleFields}
               />
             </motion.div>
           )}

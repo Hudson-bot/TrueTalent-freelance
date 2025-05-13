@@ -26,6 +26,8 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import TalentDashboard from './components/talent/TalentDashboard';
 import MessagesPage from './components/talent/MessagesPage';
 import TalentOverview from './components/talent/Dashboard';
+import Messages from './components/getHired/Messages';
+import CommunitySection from './components/getHired/CommunitySection';
 
 // Wrapper for Dashboard to handle edit navigation
 function DashboardWrapper({ personalInfo, linkInfo, skills }) {
@@ -482,8 +484,9 @@ function App() {
             <ProtectedRoute requiredRole="freelancer">
               <Routes>
                 <Route path="dashboard" element={<DashboardWrapper personalInfo={personalInfo} linkInfo={linkInfo} skills={skills} />} />
-                <Route path="community" element={<CommunityPage />} />
+                <Route path="community" element={<CommunitySection />} />
                 <Route path="projects" element={<ProjectSlider />} />
+                <Route path="messages" element={<Messages />} />
               </Routes>
             </ProtectedRoute>
           }

@@ -3,7 +3,7 @@ import { FiMessageSquare, FiUser, FiLink, FiAward, FiCompass } from 'react-icons
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 
-const Sidebar = ({ activeTab, setActiveTab, userData, handleFileChange, fetchLinks, fetchSkills }) => {
+const Sidebar = ({ activeTab = 'messages', setActiveTab = () => {}, userData = {}, handleFileChange = () => {}, fetchLinks, fetchSkills }) => {
   const navigate = useNavigate();
   
   const handleTabClick = (tabName) => {
@@ -12,6 +12,11 @@ const Sidebar = ({ activeTab, setActiveTab, userData, handleFileChange, fetchLin
       fetchLinks && fetchLinks();
     } else if (tabName === 'skills') {
       fetchSkills && fetchSkills();
+    } else if (tabName === 'messages') {
+      // Just set the active tab since we're rendering Messages inside GetHiredDashboard
+      setActiveTab('messages');
+    } else if (tabName === 'community') {
+      setActiveTab('community'); // Just set the active tab, don't navigate
     }
   };
 
@@ -66,7 +71,7 @@ const Sidebar = ({ activeTab, setActiveTab, userData, handleFileChange, fetchLin
         }`}>
           <div className="relative">
             <img 
-              src={userData.profilePic || 'https://www.vectorstock.com/royalty-free-vector/guy-anime-avatar-vector-43916661'} 
+              src={(userData && userData.profilePic) || 'https://www.vectorstock.com/royalty-free-vector/guy-anime-avatar-vector-43916661'} 
               className="w-12 h-12 rounded-full object-cover border-2 border-indigo-100"
               alt="Profile"
             />
@@ -85,10 +90,10 @@ const Sidebar = ({ activeTab, setActiveTab, userData, handleFileChange, fetchLin
           </div>
           <div>
             <h3 className="font-medium flex items-center space-x-2">
-              <span>{userData.name || 'New User'}</span>
+              <span>{(userData && userData.name) || 'New User'}</span>
               <FiUser className="text-gray-400 group-hover:text-indigo-600 transition-colors" />
             </h3>
-            <p className="text-xs text-gray-500">{userData.title || 'Your Title'}</p>
+            <p className="text-xs text-gray-500">{(userData && userData.title) || 'Your Title'}</p>
           </div>
         </div>
       </div>

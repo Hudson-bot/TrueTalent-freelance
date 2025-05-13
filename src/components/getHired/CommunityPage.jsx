@@ -55,11 +55,22 @@ const CommunityPage = () => {
     fetchUsers();
   }, []);
 
-  const handleChat = (user, e) => {
+  const handleChat = async (user, e) => {
     e.stopPropagation();
-    setSelectedUser(user);
-    setShowChatModal(true);
-    setMessageSent(false);
+    const currentUserId = localStorage.getItem('userId');
+    
+    try {
+      // Create or get existing conversation
+      const response = await axios.post('http://localhost:5000/api/conversations', {
+        userId: currentUserId,
+        otherUserId: user._id
+      });
+      
+      // Navigate to messages with the conversation selected
+      navigate('/messages', { state: { conversationId: response.data._id } });
+    } catch (err) {
+      console.error('Error creating conversation:', err);
+    }
   };
 
   const closeChat = () => {
