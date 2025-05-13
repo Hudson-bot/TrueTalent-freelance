@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import TalentSidebar from '../talent/TalentSidebar';
+import Sidebar from './Sidebar';
 import { useNavigate } from 'react-router-dom';
 
 const CommunityPage = () => {
@@ -13,7 +13,30 @@ const CommunityPage = () => {
   const [message, setMessage] = useState('');
   const [messageSent, setMessageSent] = useState(false);
   const [activeTab, setActiveTab] = useState('community');
+  const [userData, setUserData] = useState({
+    name: '',
+    title: '',
+    profilePic: null
+  });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+
+      try {
+        const response = await axios.get(`http://localhost:5000/api/personal-info/${userId}`);
+        if (response.data) {
+          setUserData(response.data);
+        }
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -62,10 +85,21 @@ const CommunityPage = () => {
   };
 
   const handleFileChange = (e) => {
-    console.log('File changed:', e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUserData(prev => ({
+          ...prev,
+          profilePic: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleTabChange = (tabName) => {
+    setActiveTab(tabName);
     switch(tabName) {
       case 'messages':
         navigate('/messages');
@@ -113,7 +147,12 @@ const CommunityPage = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <TalentSidebar activeTab="community" />
+      <Sidebar 
+        activeTab={activeTab}
+        setActiveTab={handleTabChange}
+        userData={userData}
+        handleFileChange={handleFileChange}
+      />
       
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-6xl mx-auto px-4 py-8">

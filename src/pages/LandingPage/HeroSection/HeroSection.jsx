@@ -6,6 +6,7 @@ import axios from "axios";
 import { useAuth } from "../../../context/AuthContext";
 import ClientInfoModal from "../../../components/hire/ClientInfoModal";
 import "./HeroSection.css"; // Adjust the path as necessary
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = ({ freelanceAnimationData, scrollY }) => {
   const [loading, setLoading] = useState({ hire: false, freelancer: false });
@@ -26,6 +27,7 @@ const HeroSection = ({ freelanceAnimationData, scrollY }) => {
     "Content Creation",
     1500,
   ];
+  const navigate = useNavigate();
 
   const defaultLottieOptions = {
     loop: true,
@@ -120,8 +122,8 @@ const HeroSection = ({ freelanceAnimationData, scrollY }) => {
           // Refresh user data in context
           await fetchCurrentUser();
           
-          // Navigate to freelancer profile page
-          window.location.href = "/personal";
+          // Navigate to personal info page to start the onboarding flow
+          navigate('/personal');
         }
       } catch (error) {
         console.error('Error updating role:', error);
@@ -137,7 +139,7 @@ const HeroSection = ({ freelanceAnimationData, scrollY }) => {
       }
     } else {
       // Redirect to login if not logged in
-      window.location.href = "/login";
+      navigate('/login');
     }
   };
 

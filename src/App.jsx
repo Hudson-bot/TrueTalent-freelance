@@ -22,7 +22,7 @@ import CommunityPage from "./components/getHired/CommunityPage";
 import ProjectSlider from "./components/getHired/ProjectSlider";
 import Login from "./components/Authentication/Login";
 import Signup from "./components/Authentication/Signup";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import TalentDashboard from './components/talent/TalentDashboard';
 import MessagesPage from './components/talent/MessagesPage';
 import TalentOverview from './components/talent/Dashboard';
@@ -169,15 +169,22 @@ function ModalLayer({
 }
 
 function App() {
-  const [personalInfo, setPersonalInfo] = useState({});
-  const [linkInfo, setLinkInfo] = useState({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [personalInfo, setPersonalInfo] = useState(null);
+  const [linkInfo, setLinkInfo] = useState([]);
   const [skills, setSkills] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
   const location = useLocation();
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+  }, []);
 
   // Check authentication status
   useEffect(() => {
@@ -227,8 +234,8 @@ function App() {
   // Clear user data when token changes
   useEffect(() => {
     if (!token) {
-      setPersonalInfo({});
-      setLinkInfo({});
+      setPersonalInfo(null);
+      setLinkInfo([]);
       setSkills([]);
       localStorage.removeItem("userEmail");
       localStorage.removeItem("userRole");
@@ -248,8 +255,8 @@ function App() {
       if (!userId || !authToken) {
         setIsLoading(false);
         // Clear any existing data
-        setPersonalInfo({});
-        setLinkInfo({});
+        setPersonalInfo(null);
+        setLinkInfo([]);
         setSkills([]);
         return;
       }
@@ -301,8 +308,8 @@ function App() {
           localStorage.removeItem("userId");
           setToken(null);
           // Clear state data
-          setPersonalInfo({});
-          setLinkInfo({});
+          setPersonalInfo(null);
+          setLinkInfo([]);
           setSkills([]);
         }
       } finally {
@@ -343,6 +350,119 @@ function App() {
         <Route 
           path="/signup" 
           element={isAuthenticated ? <Navigate to="/gethired/dashboard" /> : <Signup />} 
+        />
+
+        {/* Personal Info Modal Route */}
+        <Route
+          path="/personal"
+          element={
+            <ProtectedRoute>
+              <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
+                <PersonalInfoModal
+                  onSave={async (info) => {
+                    try {
+                      const res = await axios.post(
+                        "http://localhost:5000/api/personal-info",
+                        {
+                          userId: localStorage.getItem("userId"),
+                          ...info,
+                        },
+                        {
+                          headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                          },
+                        }
+                      );
+                      setPersonalInfo(res.data);
+                      navigate("/links");
+                    } catch (err) {
+                      console.error("Failed to save personal info:", err);
+                      if (err.response?.status === 401) {
+                        navigate("/login");
+                      }
+                    }
+                  }}
+                  onClose={() => navigate("/gethired/dashboard")}
+                />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Links Info Modal Route */}
+        <Route
+          path="/links"
+          element={
+            <ProtectedRoute>
+              <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
+                <LinkInfoModal
+                  existingLinks={linkInfo}
+                  userId={localStorage.getItem("userId")}
+                  onSave={async (links) => {
+                    try {
+                      const response = await axios.put(
+                        `http://localhost:5000/api/users/${localStorage.getItem("userId")}/links`,
+                        links,
+                        {
+                          headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                          },
+                        }
+                      );
+                      setLinkInfo(response.data);
+                      navigate("/skills");
+                    } catch (error) {
+                      console.error("Failed to save links:", error);
+                      if (error.response?.status === 401) {
+                        navigate("/login");
+                      }
+                    }
+                  }}
+                  onClose={() => navigate("/gethired/dashboard")}
+                  onBack={() => navigate("/personal")}
+                />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Skills Selection Modal Route */}
+        <Route
+          path="/skills"
+          element={
+            <ProtectedRoute>
+              <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
+                <SkillSelectModal
+                  existingSkills={skills}
+                  onSave={async (selectedSkills) => {
+                    try {
+                      await axios.post(
+                        "http://localhost:5000/api/skills",
+                        {
+                          userId: localStorage.getItem("userId"),
+                          skills: selectedSkills,
+                        },
+                        {
+                          headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                          },
+                        }
+                      );
+                      setSkills(selectedSkills);
+                      navigate("/gethired/dashboard");
+                    } catch (error) {
+                      console.error("Error saving skills:", error);
+                      if (error.response?.status === 401) {
+                        navigate("/login");
+                      }
+                    }
+                  }}
+                  onClose={() => navigate("/gethired/dashboard")}
+                  onBack={() => navigate("/links")}
+                />
+              </div>
+            </ProtectedRoute>
+          }
         />
         
         {/* Community route - accessible to all authenticated users */}
