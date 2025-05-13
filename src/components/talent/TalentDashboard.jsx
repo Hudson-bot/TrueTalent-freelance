@@ -209,145 +209,147 @@ export default function TalentDashboard() {
   return (
     <div className="flex h-screen bg-gray-50">
       <TalentSidebar activeTab={getActiveTab()} />
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <main className="p-6 flex-1 overflow-y-auto">
-          {/* Search and filter header */}
-          <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sticky top-0 bg-gray-50 z-10 py-3">
-            <div className="relative flex-1 max-w-2xl">
-              <input
-                type="text"
-                placeholder="Search by name, title, or skills..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            </div>
-
-            <div className="flex flex-wrap gap-3 w-full md:w-auto">
-              {/* Filter toggle */}
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="px-4 py-2 border border-gray-300 bg-white rounded-lg hover:bg-gray-50 flex items-center"
-              >
-                <FiFilter className="mr-2" />
-                Filters
-                {Object.values(filters).flat().some(val =>
-                  Array.isArray(val) ? val.length > 0 : val !== ''
-                ) && (
-                    <span className="ml-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                      !
-                    </span>
-                  )}
-              </button>
-
-              {/* Sort dropdown */}
-              <div className="relative">
-                <select
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                  className="appearance-none pl-3 pr-8 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="match">Best Match</option>
-                </select>
-                <FiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 flex flex-col">
+          {/* Search and filter header - Fixed */}
+          <div className="p-6 bg-gray-50 border-b border-gray-200">
+            <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="relative flex-1 max-w-2xl">
+                <input
+                  type="text"
+                  placeholder="Search by name, title, or skills..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
 
-              {/* View toggle */}
-              <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+              <div className="flex flex-wrap gap-3 w-full md:w-auto">
+                {/* Filter toggle */}
                 <button
-                  onClick={() => setView('grid')}
-                  className={`px-3 py-2 flex items-center ${view === 'grid' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600'
-                    }`}
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="px-4 py-2 border border-gray-300 bg-white rounded-lg hover:bg-gray-50 flex items-center"
                 >
-                  <FiGrid className="mr-1" />
-                  <span className="hidden sm:inline">Grid</span>
+                  <FiFilter className="mr-2" />
+                  Filters
+                  {Object.values(filters).flat().some(val =>
+                    Array.isArray(val) ? val.length > 0 : val !== ''
+                  ) && (
+                      <span className="ml-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                        !
+                      </span>
+                    )}
                 </button>
-                <button
-                  onClick={() => setView('list')}
-                  className={`px-3 py-2 flex items-center ${view === 'list' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600'
-                    }`}
-                >
-                  <FiList className="mr-1" />
-                  <span className="hidden sm:inline">List</span>
-                </button>
+
+                {/* Sort dropdown */}
+                <div className="relative">
+                  <select
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                    className="appearance-none pl-3 pr-8 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="match">Best Match</option>
+                  </select>
+                  <FiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+                </div>
+
+                {/* View toggle */}
+                <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+                  <button
+                    onClick={() => setView('grid')}
+                    className={`px-3 py-2 flex items-center ${view === 'grid' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600'}`}
+                  >
+                    <FiGrid className="mr-1" />
+                    <span className="hidden sm:inline">Grid</span>
+                  </button>
+                  <button
+                    onClick={() => setView('list')}
+                    className={`px-3 py-2 flex items-center ${view === 'list' ? 'bg-blue-500 text-white' : 'bg-white text-gray-600'}`}
+                  >
+                    <FiList className="mr-1" />
+                    <span className="hidden sm:inline">List</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Main content with filters and talents */}
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Filters sidebar */}
-            {showFilters && (
-              <div className="md:w-64 bg-white p-4 rounded-lg shadow-sm border border-gray-100 sticky top-24">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="font-semibold text-gray-800">Filters</h2>
-                  <button onClick={() => setShowFilters(false)} className="text-gray-400 hover:text-gray-600">
-                    <FiX size={18} />
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-hidden">
+            <div className="h-full flex">
+              {/* Filters sidebar - Fixed */}
+              {showFilters && (
+                <div className="w-64 min-w-64 bg-white p-4 border-r border-gray-200 overflow-y-auto">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="font-semibold text-gray-800">Filters</h2>
+                    <button onClick={() => setShowFilters(false)} className="text-gray-400 hover:text-gray-600">
+                      <FiX size={18} />
+                    </button>
+                  </div>
+
+                  {/* Skills filter */}
+                  <div className="mb-6">
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">Skills</h3>
+                    <div className="space-y-2">
+                      {['UI/UX Design', 'React', 'Node.js', 'JavaScript', 'Python', 'Content Writing', 'SEO'].map((skill) => (
+                        <label key={skill} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={filters.skills.includes(skill)}
+                            onChange={(e) => {
+                              const isChecked = e.target.checked;
+                              const newSkills = isChecked
+                                ? [...filters.skills, skill]
+                                : filters.skills.filter((s) => s !== skill);
+                              handleFilterChange({ ...filters, skills: newSkills });
+                            }}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                          />
+                          <span className="ml-2 text-sm text-gray-600">{skill}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Reset filters button */}
+                  <button
+                    onClick={() => {
+                      const defaultFilters = {
+                        skills: [],
+                      };
+                      handleFilterChange(defaultFilters);
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+                  >
+                    Reset Filters
                   </button>
                 </div>
+              )}
 
-                {/* Skills filter */}
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Skills</h3>
-                  <div className="space-y-2">
-                    {['UI/UX Design', 'React', 'Node.js', 'JavaScript', 'Python', 'Content Writing', 'SEO'].map((skill) => (
-                      <label key={skill} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={filters.skills.includes(skill)}
-                          onChange={(e) => {
-                            const isChecked = e.target.checked;
-                            const newSkills = isChecked
-                              ? [...filters.skills, skill]
-                              : filters.skills.filter((s) => s !== skill);
-                            handleFilterChange({ ...filters, skills: newSkills });
-                          }}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
-                        />
-                        <span className="ml-2 text-sm text-gray-600">{skill}</span>
-                      </label>
+              {/* Talents grid/list - Scrollable */}
+              <div className="flex-1 p-6 overflow-y-auto">
+                {filteredTalents.length === 0 ? (
+                  <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                    <FiUsers size={48} className="mx-auto text-gray-300 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-800 mb-2">No talents found</h3>
+                    <p className="text-gray-500">Try adjusting your filters or search criteria</p>
+                  </div>
+                ) : (
+                  <div className={`grid gap-6 ${view === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+                    {filteredTalents.map((talent) => (
+                      <TalentCard
+                        key={talent._id}
+                        talent={talent}
+                        view={view}
+                        onToggleFavorite={handleToggleFavorite}
+                        onToggleSaved={handleToggleSaved}
+                        onSendMessage={handleSendMessage}
+                      />
                     ))}
                   </div>
-                </div>
-
-                {/* Reset filters button */}
-                <button
-                  onClick={() => {
-                    const defaultFilters = {
-                      skills: [],
-                    };
-                    handleFilterChange(defaultFilters);
-                  }}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
-                >
-                  Reset Filters
-                </button>
+                )}
               </div>
-            )}
-
-            {/* Talents grid/list */}
-            <div className="flex-1 min-h-0">
-              {filteredTalents.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-                  <FiUsers size={48} className="mx-auto text-gray-300 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-800 mb-2">No talents found</h3>
-                  <p className="text-gray-500">Try adjusting your filters or search criteria</p>
-                </div>
-              ) : (
-                <div className={`grid gap-6 ${view === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
-                  {filteredTalents.map((talent) => (
-                    <TalentCard
-                      key={talent._id}
-                      talent={talent}
-                      view={view}
-                      onToggleFavorite={handleToggleFavorite}
-                      onToggleSaved={handleToggleSaved}
-                      onSendMessage={handleSendMessage}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         </main>
