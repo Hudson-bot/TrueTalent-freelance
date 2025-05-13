@@ -9,18 +9,32 @@ import { useAuth } from '../../context/AuthContext';
 
 const TalentSidebar = ({ activeTab }) => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, currentUser } = useAuth();
 
-  const menuItems = [
-    { icon: FiHome, label: 'Dashboard', path: '/talent/dashboard', id: 'dashboard' },
-    { icon: FiGrid, label: 'Browse Talent', path: '/talent/browse', id: 'talents' },
-    { icon: FiFolder, label: 'Projects', path: '/hire/projects', id: 'projects' },
-    { icon: FiPlusCircle, label: 'Post a Project', path: '/talent/post', id: 'post' },
-    // { icon: FiCommunity, label: 'Community', path: '/talent/community', id: 'community' }, //community page
-    { icon: FiMessageSquare, label: 'Messages', path: '/talent/messages', id: 'messages' },
-    { icon: FiHeart, label: 'Favorites', path: '/favorites', id: 'favorites' },
-    { icon: FiBookmark, label: 'Saved', path: '/saved', id: 'saved' },
-  ];
+  // Define menu items based on user role
+  const getMenuItems = () => {
+    if (currentUser?.role === 'client') {
+      return [
+        { icon: FiHome, label: 'Dashboard', path: '/talent/dashboard', id: 'dashboard' },
+        { icon: FiGrid, label: 'Browse Talent', path: '/talent/browse', id: 'talents' },
+        { icon: FiFolder, label: 'Projects', path: '/talent/projects', id: 'projects' },
+        { icon: FiPlusCircle, label: 'Post a Project', path: '/talent/post', id: 'post' },
+        { icon: FiMessageSquare, label: 'Messages', path: '/talent/messages', id: 'messages' },
+        { icon: FiHeart, label: 'Favorites', path: '/favorites', id: 'favorites' },
+        { icon: FiBookmark, label: 'Saved', path: '/saved', id: 'saved' },
+      ];
+    } else if (currentUser?.role === 'freelancer') {
+      return [
+        { icon: FiHome, label: 'Dashboard', path: '/gethired/dashboard', id: 'dashboard' },
+        { icon: FiGrid, label: 'Browse Projects', path: '/gethired/projects', id: 'projects' },
+        { icon: FiMessageSquare, label: 'Messages', path: '/gethired/messages', id: 'messages' },
+        { icon: FiCommunity, label: 'Community', path: '/gethired/community', id: 'community' },
+      ];
+    }
+    return [];
+  };
+
+  const menuItems = getMenuItems();
 
   const handleLogout = async () => {
     try {

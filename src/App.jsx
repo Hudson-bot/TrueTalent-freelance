@@ -345,6 +345,16 @@ function App() {
           element={isAuthenticated ? <Navigate to="/gethired/dashboard" /> : <Signup />} 
         />
         
+        {/* Community route - accessible to all authenticated users */}
+        <Route
+          path="/community"
+          element={
+            <ProtectedRoute>
+              <CommunityPage />
+            </ProtectedRoute>
+          }
+        />
+        
         {/* GetHired (Freelancer) routes */}
         <Route
           path="/gethired/*"
@@ -376,7 +386,7 @@ function App() {
         <Route 
           path="/talent/*"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="client">
               <Routes>
                 <Route path="dashboard" element={<TalentOverview />} />
                 <Route path="browse" element={<TalentDashboard />} />
