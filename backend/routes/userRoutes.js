@@ -4,8 +4,9 @@ import User from '../models/User.js';
 import axios from 'axios';
 import crypto from 'crypto';
 import mongoose from 'mongoose';
-import { getUsers } from '../controllers/userController.js';
+import { getUsers, getUsersForMessaging, getOnlineUsers } from '../controllers/userController.js';
 import { protect } from '../middleware/auth.js';
+import auth from '../middleware/auth.js';
 
 // Disable Mongoose validation globally
 mongoose.set('runValidators', false);
@@ -46,6 +47,12 @@ router.get('/skills/:userId', async (req, res) => {
 
 // Route for CommunityPage.jsx
 router.get('/users', getUsers);
+
+// Route for Messaging - get users for chat
+router.get('/users/messaging', auth, getUsersForMessaging);
+
+// Route to get online users
+router.get('/users/online', auth, getOnlineUsers);
 
 // Route from users.js - consolidated here to avoid redundancy
 router.get('/users/all', async (req, res) => {

@@ -5,21 +5,46 @@ import { FiMessageCircle, FiSend, FiPaperclip, FiImage, FiSmile, FiMoreVertical 
 import axios from 'axios';
 import { format } from 'date-fns';
 
+// Add a validation function at the top of the file
+const isValidObjectId = (id) => {
+  if (!id) return false;
+  // Check if it's a string
+  if (typeof id !== 'string') return false;
+  // Clean the id of any whitespace
+  const cleanId = id.trim();
+  // Check for 24 hex characters
+  return /^[0-9a-fA-F]{24}$/.test(cleanId);
+};
+
 const ProfileSection = ({ formData, updateFormData, updateMultipleFields }) => {
   const [showModal, setShowModal] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [recentChats, setRecentChats] = useState([]);
+  const [error, setError] = useState(null);
   
   useEffect(() => {
+    // Validate user ID before fetching
+    const userId = localStorage.getItem('userId');
+    if (!userId || !isValidObjectId(userId)) {
+      console.error('Invalid user ID in localStorage. Skipping API calls.');
+      setError('Authentication issue detected. Please try logging in again.');
+      return;
+    }
+    
     // Fetch recent chats
     const fetchRecentChats = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/conversations/${localStorage.getItem('userId')}`);
+        const response = await axios.get('http://localhost:5000/api/conversations', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         setRecentChats(response.data);
       } catch (error) {
         console.error('Error fetching recent chats:', error);
+        setError('Could not load recent messages. Please try again later.');
       }
     };
     
@@ -57,6 +82,25 @@ const ProfileSection = ({ formData, updateFormData, updateMultipleFields }) => {
 
   return (
     <div className="max-w-6xl mx-auto">
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-lg">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="font-medium">{error}</p>
+              <p className="text-sm mt-1">
+                Try logging out and back in again to fix authentication issues.
+              </p>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              className="text-red-600 hover:text-red-800"
+            >
+              <span className="text-xl">×</span>
+            </button>
+          </div>
+        </div>
+      )}
+      
       <div className="flex gap-8">
         {/* Profile Information */}
         <div className="flex-1">

@@ -28,6 +28,8 @@ import MessagesPage from './components/talent/MessagesPage';
 import TalentOverview from './components/talent/Dashboard';
 import Messages from './components/getHired/Messages';
 import CommunitySection from './components/getHired/CommunitySection';
+import ClientMessagesPage from './components/hire/ClientMessagesPage';
+import HiredMessagesPage from './components/getHired/HiredMessagesPage';
 
 // Wrapper for Dashboard to handle edit navigation
 function DashboardWrapper({ personalInfo, linkInfo, skills }) {
@@ -500,6 +502,7 @@ function App() {
               <Routes>
                 <Route path="profile" element={<HireProfile />} />
                 <Route path="projects" element={<HireDashboard />} />
+                <Route path="messages" element={<ClientMessagesPage />} />
               </Routes>
             </ProtectedRoute>
           } 
